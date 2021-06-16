@@ -1,6 +1,17 @@
-
+USE [master]
+GO
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'SEDC')
+	ALTER DATABASE [SEDC] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE
+GO
+USE [Master]
+GO
+DROP DATABASE IF EXISTS [SEDC]
+GO
+CREATE DATABASE [SEDC]
+GO
 USE [SEDC]
 GO
+
 
 DROP TABLE IF EXISTS [dbo].OrderDetails;
 DROP TABLE IF EXISTS [dbo].[Order];
@@ -16,7 +27,10 @@ CREATE TABLE [dbo].[BusinessEntity](
 	[Region] [nvarchar](1000) NULL,
 	[Zipcode] [nvarchar](10) NULL,
 	[Size] [nvarchar](10) NULL,
-)
+ CONSTRAINT [PK_BusinessEntity] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+))
 GO
 
 CREATE TABLE [dbo].[Customer](
@@ -90,4 +104,8 @@ CREATE TABLE [dbo].[OrderDetails](
 GO
 
 
-
+ALTER TABLE [dbo].[OrderDetails] ADD CONSTRAINT [FK_OrderDetails_Order] FOREIGN KEY ([OrderId]) REFERENCES [dbo].[Order]([Id]);
+ALTER TABLE [dbo].[Order] ADD CONSTRAINT [FK_Order_BusinessEntity] FOREIGN KEY ([BusinessEntityId]) REFERENCES [dbo].[BusinessEntity]([Id]);
+ALTER TABLE [dbo].[Order] ADD CONSTRAINT [FK_Order_Employee] FOREIGN KEY ([EmployeeId]) REFERENCES [dbo].[Employee]([Id]);
+ALTER TABLE [dbo].[Order] ADD CONSTRAINT [FK_Order_Customer] FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[Customer]([Id]);
+ALTER TABLE [dbo].[OrderDetails] ADD CONSTRAINT [FK_OrderDetails_Product] FOREIGN KEY ([ProductId]) REFERENCES [dbo].[Product]([Id]);
